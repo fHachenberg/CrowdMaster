@@ -18,10 +18,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "CrowdMaster",
+    "name": "CrowdMaster for Blender 2.8",
     "author": "Peter Noble, John Roper, Andrew Buttery, Christian Campos Angulo, Patrick Crawford, Jake Dube",
     "version": (1, 3, 3),
-    "blender": (2, 78, 0),
+    "blender": (2, 8, 0),
     "location": "Node Editor > CrowdMaster Node Trees",
     "description": "Crowd Simulation for the Masses",
     "warning": "This is a development version of CrowdMaster! Some things may appear, dissapear, and fail at random times.",
