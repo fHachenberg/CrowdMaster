@@ -350,7 +350,7 @@ class Leaf:
 if __name__ == "__main__":
     """
     bbs = []
-    for ob in bpy.context.scene.objects:
+    for ob in bpy.context.render_layer.objects:
         bbs.append(boundingBoxFromBPY(ob))
     """
 
@@ -372,7 +372,7 @@ if __name__ == "__main__":
         t = time.time()
         for f in range(5):
             bbs = []
-            for ob in bpy.context.scene.objects[:n]:
+            for ob in bpy.context.render_layer.objects[:n]:
                 bbs.append(boundingSphereFromBPY(ob))
             O = createOctree(bbs)
         constructTime.append((time.time() - t) / 5)
@@ -401,7 +401,7 @@ if __name__ == "__main__":
         # complete.
         """t = time.time()
         bbs = []
-        for ob in bpy.context.scene.objects[:n]:
+        for ob in bpy.context.render_layer.objects[:n]:
             bbs.append(boundingSphereFromBPY(ob))
         bruteContructTime.append(time.time() - t)
 

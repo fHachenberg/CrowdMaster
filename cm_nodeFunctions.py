@@ -733,7 +733,7 @@ class StateAction(State):
         if self.action in self.brain.sim.actions:
             actionobj = self.brain.sim.actions[self.action]
             # from .cm_motion.py
-            obj = bpy.context.scene.objects[self.brain.userid]  # bpy object
+            obj = bpy.context.render_layer.objects[self.brain.userid]  # bpy object
 
             tr = obj.animation_data.nla_tracks.new()  # NLA track
             action = actionobj.action  # bpy action
@@ -824,7 +824,7 @@ class StateAction(State):
                 x = data[0][self.currentFrame] - data[0][self.currentFrame - 1]
                 y = data[1][self.currentFrame] - data[1][self.currentFrame - 1]
                 z = data[2][self.currentFrame] - data[2][self.currentFrame - 1]
-                scale = bpy.context.scene.objects[self.brain.userid].scale
+                scale = bpy.context.render_layer.objects[self.brain.userid].scale
                 if data_path == "location":
                     self.brain.outvars["px"] += x * scale.x
                     self.brain.outvars["py"] += y * scale.y

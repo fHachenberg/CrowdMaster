@@ -163,7 +163,7 @@ def sortAlongLine(points, p1, p2, access=lambda x: x, incTValue=False):
 """
 import bpy
 
-objs = bpy.context.scene.objects
+objs = bpy.context.render_layer.objects
 
 l1 = objs["Empty"].location
 l2 = objs["Empty.001"].location

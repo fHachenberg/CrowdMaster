@@ -406,7 +406,7 @@ class Agent:
         else:
             self.apzKey = False
 
-        objs = bpy.context.scene.objects
+        objs = bpy.context.render_layer.objects
 
         modArm = None
         if objs[self.id].type == 'Armature':

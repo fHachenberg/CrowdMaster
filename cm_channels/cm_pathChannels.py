@@ -60,7 +60,7 @@ class Path(Mc):
     def calcPathData(self, pathObject, revDirec):
         if pathObject in self.pathObjectCache:
             return self.pathObjectCache[pathObject]
-        obj = bpy.context.scene.objects[pathObject]
+        obj = bpy.context.render_layer.objects[pathObject]
         mesh = obj.data
         size = len(mesh.vertices)
         kd = mathutils.kdtree.KDTree(size)
@@ -306,7 +306,7 @@ class Path(Mc):
             bm, co, index, co_find, nDirec, isDirectional)
         nextIndex, nextVert, nextDirec, nextRevDirec, start, adjustLength, index, co = res
 
-        obj = bpy.context.scene.objects[pathObject]
+        obj = bpy.context.render_layer.objects[pathObject]
         globalPos = start * obj.matrix_world
 
         pointTowards = nextVert * obj.matrix_world
@@ -328,10 +328,10 @@ class Path(Mc):
         vel = self.sim.agents[self.userid].globalVelocity * lookahead
         if vel.x == 0 and vel.y == 0 and vel.z == 0:
             vel = Vector((0, lookahead, 0))
-            vel.rotate(bpy.context.scene.objects[self.userid].rotation_euler)
+            vel.rotate(bpy.context.render_layer.objects[self.userid].rotation_euler)
         vel = vel * rotation
         co_find = pathMatrixInverse * \
-            context.scene.objects[self.userid].location
+            context.render_layer.objects[self.userid].location
         co, index, dist = kd.find(co_find)
         offset = self.followPath(bm, co, index, vel, co_find, radius, laneSep,
                                  isDirectional, pathEntry)
@@ -339,7 +339,7 @@ class Path(Mc):
         offset = offset * pathMatrixInverse
 
         eul = Euler(
-            [-x for x in context.scene.objects[self.userid].rotation_euler], 'ZYX')
+            [-x for x in context.render_layer.objects[self.userid].rotation_euler], 'ZYX')
         offset.rotate(eul)
 
         return offset
@@ -428,13 +428,13 @@ class Path(Mc):
                                                                 revDirec)
 
         co_find = pathMatrixInverse * \
-            context.scene.objects[self.userid].location
+            context.render_layer.objects[self.userid].location
         myEdgeIndex, myStart = self.startEdgeAndPoint(bm, kd, co_find)
 
         edgeAgentCache = {}
 
         for agent in agents:
-            loc = pathMatrixInverse * context.scene.objects[agent].location
+            loc = pathMatrixInverse * context.render_layer.objects[agent].location
             edgeIndex, start = self.startEdgeAndPoint(bm, kd, loc)
             if edgeIndex not in edgeAgentCache:
                 edgeAgentCache[edgeIndex] = []
@@ -497,13 +497,13 @@ class draw_path_directions_operator(Operator):
                 self._handle_3d, 'WINDOW')
             activePath = None
             # Hack to force redraw
-            context.scene.objects.active = context.scene.objects.active
+            context.render_layer.objects.active = context.render_layer.objects.active
             return {'CANCELLED'}
         if activePath != self.pathName:
             bpy.types.SpaceView3D.draw_handler_remove(
                 self._handle_3d, 'WINDOW')
             # Hack to force redraw
-            context.scene.objects.active = context.scene.objects.active
+            context.render_layer.objects.active = context.render_layer.objects.active
             return {'CANCELLED'}
 
         return {'PASS_THROUGH'}
@@ -520,7 +520,7 @@ class draw_path_directions_operator(Operator):
         context.window_manager.modal_handler_add(self)
 
         # Hack to force redraw
-        context.scene.objects.active = context.scene.objects.active
+        context.render_layer.objects.active = context.render_layer.objects.active
         return {'RUNNING_MODAL'}
 
 
@@ -580,7 +580,7 @@ class SCENE_UL_cm_path(UIList):
         if item.mode == "road":
             layout.prop(item, "laneSeparation")
         if item.mode == "directional":
-            if context.scene.objects.active == bpy.data.objects[item.objectName]:
+            if context.render_layer.objects.active == bpy.data.objects[item.objectName]:
                 oper = layout.operator("view3d.draw_path_operator")
                 oper.pathName = item.name
 
@@ -662,7 +662,7 @@ class Switch_Selected_Path(Operator):
                     revEdge.name = indexStr
 
         # Hack to force redraw
-        context.scene.objects.active = context.scene.objects.active
+        context.render_layer.objects.active = context.render_layer.objects.active
         return {'FINISHED'}
 
 
@@ -706,7 +706,7 @@ class Switch_Connected_Path(Operator):
             fringe = nextFrige
 
         # Hack to force redraw
-        context.scene.objects.active = context.scene.objects.active
+        context.render_layer.objects.active = context.render_layer.objects.active
         return {'FINISHED'}
 
 
@@ -753,7 +753,7 @@ class cm_path_bfs(Operator):
             fringe = nextFrige
 
         # Hack to force redraw
-        context.scene.objects.active = context.scene.objects.active
+        context.render_layer.objects.active = context.render_layer.objects.active
         return {'FINISHED'}
 
 
@@ -802,7 +802,7 @@ class cm_path_dfs(Operator):
             self.dfs(v)
 
         # Hack to force redraw
-        context.scene.objects.active = context.scene.objects.active
+        context.render_layer.objects.active = context.render_layer.objects.active
         return {'FINISHED'}
 
 

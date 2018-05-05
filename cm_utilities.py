@@ -36,7 +36,7 @@ class Crowdmaster_place_deferred_geo(Operator):
 
     def execute(self, context):
         groups = bpy.data.groups
-        objects = context.scene.objects
+        objects = context.render_layer.objects
         for group in context.scene.cm_groups:
             for agentType in group.agentTypes:
                 for agent in agentType.agents:
@@ -62,7 +62,7 @@ class Crowdmaster_place_deferred_geo(Operator):
                                     newObj.data.update()
                             if not child:
                                 newObj.matrix_world = obj.matrix_world
-                            context.scene.objects.link(newObj)
+                            context.render_layer.objects.link(newObj)
                             for user_group in obj.users_group:
                                 user_group.objects.link(newObj)
                         elif "cm_deferGroup" in obj:
@@ -78,7 +78,7 @@ class Crowdmaster_place_deferred_geo(Operator):
                                         newObjs.append(groupObj.copy())
                                     else:
                                         newObjs.append(
-                                            context.scene.objects[agent.name])
+                                            context.render_layer.objects[agent.name])
 
                                 for nObj in newObjs:
                                     if nObj.name == agent.name:
@@ -88,7 +88,7 @@ class Crowdmaster_place_deferred_geo(Operator):
                                             nObj.parent)]
 
                                     groups[agent.geoGroup].objects.link(nObj)
-                                    context.scene.objects.link(nObj)
+                                    context.render_layer.objects.link(nObj)
                                     if nObj.type == 'MESH' and len(nObj.modifiers) > 0:
                                         for mod in nObj.modifiers:
                                             if mod.type == "ARMATURE":
@@ -106,7 +106,7 @@ class Crowdmaster_place_deferred_geo(Operator):
                                         nObj.parent = obj
 
                                     groups[agent.geoGroup].objects.link(nObj)
-                                    context.scene.objects.link(nObj)
+                                    context.render_layer.objects.link(nObj)
                             if "cm_materials" in obj:
                                 materials = obj["cm_materials"]
                                 for nObj in newObjs:

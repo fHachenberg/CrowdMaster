@@ -32,13 +32,13 @@ class State(Mc):
     @property
     @timeChannel("State")
     def radius(self):
-        return bpy.context.scene.objects[self.userid].dimensions.length / 2
+        return bpy.context.render_layer.objects[self.userid].dimensions.length / 2
 
     @property
     @timeChannel("State")
     def userObject(self):
         """Shoudn't really ever be used but here for when a feature is missing"""
-        return bpy.context.scene.objects[self.userid]
+        return bpy.context.render_layer.objects[self.userid]
 
     @property
     @timeChannel("State")

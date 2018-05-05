@@ -101,7 +101,7 @@ class Channel:
 
     def calculate(self, minusRadius):
         """Called the first time an agent uses this frequency"""
-        O = bpy.context.scene.objects
+        O = bpy.context.render_layer.objects
 
         if self.kdtree is None:
             self.kdtree = mathutils.kdtree.KDTree(len(self.emitters))
@@ -146,7 +146,7 @@ class Channel:
 
     def calculatePrediction(self):
         """Called the first time an agent uses this frequency"""
-        O = bpy.context.scene.objects
+        O = bpy.context.render_layer.objects
         ag = O[self.userid]
         agSim = self.sim.agents[self.userid]
         for emitterid, val in self.emitters:

@@ -153,7 +153,7 @@ class GeoTemplateOBJECT(GeoTemplate):
 
     def build(self, buildRequest):
         t = time.time()
-        obj = bpy.context.scene.objects[self.settings["inputObject"]]
+        obj = bpy.context.render_layer.objects[self.settings["inputObject"]]
         if buildRequest.deferGeo:
             cp = bpy.data.objects.new("Empty", None)
             cp.matrix_world = obj.matrix_world
@@ -166,16 +166,16 @@ class GeoTemplateOBJECT(GeoTemplate):
                     replacement = buildRequest.materials[m.name]
                     m.material = bpy.data.materials[replacement]
         buildRequest.group.objects.link(cp)
-        bpy.context.scene.objects.link(cp)
+        bpy.context.render_layer.objects.link(cp)
         cm_timings.placement["GeoTemplateOBJECT"] += time.time() - t
         cm_timings.placementNum["GeoTemplateOBJECT"] += 1
         return GeoReturn(cp)
 
     def check(self):
         nobject = self.settings["inputObject"]
-        objects = bpy.context.scene.objects
+        objects = bpy.context.render_layer.objects
         if (nobject in objects) and (objects[nobject].type == 'MESH'):
-            return self.settings["inputObject"] in bpy.context.scene.objects
+            return self.settings["inputObject"] in bpy.context.render_layer.objects
         logger.debug("The chosen object must exist and be of type MESH.")
         return False
 
@@ -207,7 +207,7 @@ class GeoTemplateGROUP(GeoTemplate):
                     newObj.scale = Vector((scale, scale, scale))
                     newObj.location = pos
                     group.objects.link(newObj)
-                    bpy.context.scene.objects.link(newObj)
+                    bpy.context.render_layer.objects.link(newObj)
                     newObj["cm_deferGroup"] = {"group": self.settings["inputGroup"],
                                                "aName": obj.name}
                     newObj["cm_materials"] = buildRequest.materials
@@ -238,7 +238,7 @@ class GeoTemplateGROUP(GeoTemplate):
                 obj.location += pos
 
             group.objects.link(obj)
-            bpy.context.scene.objects.link(obj)
+            bpy.context.render_layer.objects.link(obj)
             if obj.type == 'ARMATURE':
                 aName = obj.name
                 # TODO what if there is more than one armature?
@@ -402,14 +402,14 @@ class GeoTemplateLINKGROUPNODE(GeoTemplate):
         ob.dupli_type = 'GROUP'
         scene.objects.link(ob)
 
-        activeStore = bpy.context.scene.objects.active
-        bpy.context.scene.objects.active = ob
+        activeStore = bpy.context.render_layer.objects.active
+        bpy.context.render_layer.objects.active = ob
 
         bpy.ops.object.proxy_make(
             object="{0}.{1:0>3}".format(sourceRig, count))
-        rigObj = bpy.context.scene.objects.active
+        rigObj = bpy.context.render_layer.objects.active
 
-        bpy.context.scene.objects.active = activeStore
+        bpy.context.render_layer.objects.active = activeStore
 
         return ob, rigObj
 
@@ -426,8 +426,8 @@ class GeoTemplateCONSTRAINBONE(GeoTemplate):
         newRig = gret.overwriteRig
         constrainBone = gret.constrainBone
 
-        lastActive = bpy.context.scene.objects.active
-        bpy.context.scene.objects.active = newRig
+        lastActive = bpy.context.render_layer.objects.active
+        bpy.context.render_layer.objects.active = newRig
         bpy.ops.object.posemode_toggle()
         armature = newRig.data.bones
         armature.active = armature[boneName]
@@ -444,7 +444,7 @@ class GeoTemplateCONSTRAINBONE(GeoTemplate):
         # Crot.use_offset = True
 
         bpy.ops.object.posemode_toggle()
-        bpy.context.scene.objects.active = lastActive
+        bpy.context.render_layer.objects.active = lastActive
 
         gretp.overwriteRig = newRig
         gretp.constrainBone = newRig.pose.bones[boneName]
@@ -796,7 +796,7 @@ class TemplateOFFSET(Template):
             logger.debug("The Teplate input must be a Template, not GeoTemplate type.")
             return False
         ref = self.settings["referenceObject"]
-        if ref != "" and ref not in bpy.context.scene.objects:
+        if ref != "" and ref not in bpy.context.render_layer.objects:
             logger.debug("The Reference object must exist.")
             return False
         return True
@@ -841,7 +841,7 @@ class TemplatePOINTTOWARDS(Template):
 
     def build(self, buildRequest):
         t = time.time()
-        ob = bpy.context.scene.objects[self.settings["PointObject"]]
+        ob = bpy.context.render_layer.objects[self.settings["PointObject"]]
         pos = buildRequest.pos
         if self.settings["PointType"] == "OBJECT":
             point = ob.location
@@ -862,10 +862,10 @@ class TemplatePOINTTOWARDS(Template):
         self.inputs["Template"].build(buildRequest)
 
     def check(self):
-        if self.settings["PointObject"] not in bpy.context.scene.objects:
+        if self.settings["PointObject"] not in bpy.context.render_layer.objects:
             return False
         if self.settings["PointType"] == "MESH":
-            if bpy.context.scene.objects[self.settings["PointObject"]].type != 'MESH':
+            if bpy.context.render_layer.objects[self.settings["PointObject"]].type != 'MESH':
                 return False
         if "Template" not in self.inputs:
             return False
@@ -1038,9 +1038,9 @@ class TemplateMESHPOSITIONING(Template):
     def check(self):
         if "Template" not in self.inputs:
             return False
-        if self.settings["guideMesh"] not in bpy.context.scene.objects:
+        if self.settings["guideMesh"] not in bpy.context.render_layer.objects:
             return False
-        if bpy.context.scene.objects[self.settings["guideMesh"]].type != 'MESH':
+        if bpy.context.render_layer.objects[self.settings["guideMesh"]].type != 'MESH':
             return False
         if not isinstance(self.inputs["Template"], Template):
             return False
@@ -1170,11 +1170,11 @@ class TemplateVCOLPOSITIONING(Template):
     def check(self):
         if "Template" not in self.inputs:
             return False
-        if self.settings["guideMesh"] not in bpy.context.scene.objects:
+        if self.settings["guideMesh"] not in bpy.context.render_layer.objects:
             return False
         if self.settings["vcols"] == "":
             return False
-        if bpy.context.scene.objects[self.settings["guideMesh"]].type != 'MESH':
+        if bpy.context.render_layer.objects[self.settings["guideMesh"]].type != 'MESH':
             return False
         if not isinstance(self.inputs["Template"], Template):
             return False
@@ -1198,7 +1198,7 @@ class TemplatePATH(Template):
 
         pathEntry = bpy.context.scene.cm_paths.coll.get(
             self.settings["pathName"])
-        obj = bpy.context.scene.objects[pathEntry.objectName]
+        obj = bpy.context.render_layer.objects[pathEntry.objectName]
         bm = bmesh.new()
         bm.from_mesh(obj.data)
 
@@ -1298,7 +1298,7 @@ class TemplatePATH(Template):
             return False
         pathEntry = bpy.context.scene.cm_paths.coll.get(
             self.settings["pathName"])
-        obj = bpy.context.scene.objects[pathEntry.objectName]
+        obj = bpy.context.render_layer.objects[pathEntry.objectName]
         if not obj.type == 'MESH':
             return False
 
@@ -1423,9 +1423,9 @@ class TemplateTARGET(Template):
             if self.settings["targetGroups"] not in bpy.data.groups:
                 return False
         elif self.settings["targetType"] == "vertex":
-            if self.settings["targetObject"] not in bpy.context.scene.objects:
+            if self.settings["targetObject"] not in bpy.context.render_layer.objects:
                 return False
-            if bpy.context.scene.objects[self.settings["targetObject"]].type != 'MESH':
+            if bpy.context.render_layer.objects[self.settings["targetObject"]].type != 'MESH':
                 return False
         return True
 
@@ -1517,9 +1517,9 @@ class TemplateGROUND(Template):
             self.inputs["Template"].build(buildRequest)
 
     def check(self):
-        if self.settings["groundMesh"] not in bpy.context.scene.objects:
+        if self.settings["groundMesh"] not in bpy.context.render_layer.objects:
             return False
-        if bpy.context.scene.objects[self.settings["groundMesh"]].type != 'MESH':
+        if bpy.context.render_layer.objects[self.settings["groundMesh"]].type != 'MESH':
             return False
         if not isinstance(self.inputs["Template"], Template):
             return False

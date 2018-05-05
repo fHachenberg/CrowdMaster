@@ -113,13 +113,13 @@ class Channel:
         self.calcd = False
 
     def calculate(self):
-        O = bpy.context.scene.objects
+        O = bpy.context.render_layer.objects
 
         to = O[self.target]
         ag = O[self.userid]
-        userDim = bpy.context.scene.objects[self.userid].dimensions
+        userDim = bpy.context.render_layer.objects[self.userid].dimensions
 
-        tDim = max(bpy.context.scene.objects[self.target].dimensions)
+        tDim = max(bpy.context.render_layer.objects[self.target].dimensions)
         uDim = max(userDim)
 
         difx = to.location.x - ag.location.x

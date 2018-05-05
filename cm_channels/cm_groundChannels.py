@@ -79,7 +79,7 @@ class Channel:
     def calcground(self):
         """Called the first time each agent uses the Ground channel"""
         results = []
-        s = bpy.context.scene.objects[self.userid]
+        s = bpy.context.render_layer.objects[self.userid]
         for gnd in self.groupObjects:
             if gnd.name not in self.groundTrees:
                 sce = bpy.context.scene
@@ -124,7 +124,7 @@ class Channel:
         return self.store["distance"]
 
     def calcAhead(self, offset):
-        s = bpy.context.scene.objects[self.userid]
+        s = bpy.context.render_layer.objects[self.userid]
         result = None
         best = None
         for gnd in self.groupObjects:

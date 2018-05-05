@@ -48,7 +48,7 @@ class AgentInfo(Mc):
         """For each agent in the input look up the relative heading about the
         z axis"""
         result = {}
-        ag = bpy.context.scene.objects[self.userid]
+        ag = bpy.context.render_layer.objects[self.userid]
         for into in inputs:
             for i in into:
                 emitterAgent = self.sim.agents[i]
@@ -81,7 +81,7 @@ class AgentInfo(Mc):
         """For each agent in the input look up the relative heading about the
         x axis"""
         result = {}
-        ag = bpy.context.scene.objects[self.userid]
+        ag = bpy.context.render_layer.objects[self.userid]
         for into in inputs:
             for i in into:
                 emitterAgent = self.sim.agents[i]
