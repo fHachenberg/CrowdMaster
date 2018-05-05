@@ -530,6 +530,19 @@ def nodeTreeSetFakeUser(scene):
                 grp.savedOnce = True
                 grp.use_fake_user = True
 
+classes = (
+    SCENE_UL_group,
+    SCENE_UL_agent_type,
+    SCENE_OT_cm_groups_reset,
+    SCENE_OT_cm_agent_add,
+    SCENE_OT_cm_agent_add_selected,
+    SCENE_OT_cm_start,
+    SCENE_OT_cm_stop,
+    SCENE_PT_CrowdMaster,
+    SCENE_PT_CrowdMasterAgents,
+    SCENE_OT_CrowdMasterSelectGroup,
+    SCENE_PT_CrowdMasterManualAgents,
+)
 
 def register():
     global cm_documentation
@@ -548,17 +561,8 @@ def register():
     from . import cm_blenderData
     cm_blenderData.registerTypes()
 
-    bpy.utils.register_class(SCENE_UL_group)
-    bpy.utils.register_class(SCENE_UL_agent_type)
-    bpy.utils.register_class(SCENE_OT_cm_groups_reset)
-    bpy.utils.register_class(SCENE_OT_cm_agent_add)
-    bpy.utils.register_class(SCENE_OT_cm_agent_add_selected)
-    bpy.utils.register_class(SCENE_OT_cm_start)
-    bpy.utils.register_class(SCENE_OT_cm_stop)
-    bpy.utils.register_class(SCENE_PT_CrowdMaster)
-    bpy.utils.register_class(SCENE_PT_CrowdMasterAgents)
-    bpy.utils.register_class(SCENE_OT_CrowdMasterSelectGroup)
-    bpy.utils.register_class(SCENE_PT_CrowdMasterManualAgents)
+    for cls in classes:
+        register_class(cls)
 
     global Simulation
     from .cm_simulate import Simulation
@@ -617,17 +621,8 @@ def register():
 def unregister():
     unregister_icons()
 
-    bpy.utils.unregister_class(SCENE_UL_group)
-    bpy.utils.unregister_class(SCENE_UL_agent_type)
-    bpy.utils.unregister_class(SCENE_OT_cm_groups_reset)
-    bpy.utils.unregister_class(SCENE_OT_cm_agent_add)
-    bpy.utils.unregister_class(SCENE_OT_cm_agent_add_selected)
-    bpy.utils.unregister_class(SCENE_OT_cm_start)
-    bpy.utils.unregister_class(SCENE_OT_cm_stop)
-    bpy.utils.unregister_class(SCENE_PT_CrowdMaster)
-    bpy.utils.unregister_class(SCENE_PT_CrowdMasterAgents)
-    bpy.utils.unregister_class(SCENE_OT_CrowdMasterSelectGroup)
-    bpy.utils.unregister_class(SCENE_PT_CrowdMasterManualAgents)
+    for cls in classes:
+        unregister_class(cls)
 
     action_unregister()
     event_unregister()
