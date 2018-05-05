@@ -561,6 +561,7 @@ def register():
     from . import cm_blenderData
     cm_blenderData.registerTypes()
 
+    from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
 
@@ -621,6 +622,7 @@ def register():
 def unregister():
     unregister_icons()
 
+    from bpy.utils import unregister_class
     for cls in classes:
         unregister_class(cls)
 
